@@ -116,28 +116,20 @@ func (s *Server) PasteHandler() httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		s.counters.Inc("n_paste")
 
-		blob := r.FormValue("blob")
-
-		if blob == "" {
-			body, err := ioutil.ReadAll(r.Body)
-			if err != nil {
-				http.Error(w, "Internal Error", http.StatusInternalServerError)
-				return
-			}
-			blob = string(body)
+		body, err := ioutil.ReadAll(r.Body)
+		log.Printf("body: %v", body)
+		if err != nil {
+			http.Error(w, "Internal Error", http.StatusInternalServerError)
+			return
 		}
 
-		if blob == "" {
-			blob = r.URL.Query().Get("blob")
-		}
-
-		if blob == "" {
+		if len(body) == 0 {
 			http.Error(w, "Bad Request", http.StatusBadRequest)
 			return
 		}
 
 		uuid := shortuuid.NewWithNamespace(s.config.fqdn)
-		s.store.Set(uuid, blob, cache.DefaultExpiration)
+		s.store.Set(uuid, string(body), cache.DefaultExpiration)
 
 		u, err := url.Parse(fmt.Sprintf("./p/%s", uuid))
 		if err != nil {
