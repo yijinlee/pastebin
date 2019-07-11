@@ -11,8 +11,7 @@ CLI for interacting with the service in a easy way or you can also use curl!
 ### Source
 
 ```#!bash
-$ go install github.com/prologic/pastebin
-$ go install github.com/prologic/pastebin/cmd/pb/...
+$ go get github.com/prologic/pastebin/...
 ```
 
 ## Usage
