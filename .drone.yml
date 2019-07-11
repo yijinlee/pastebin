@@ -6,7 +6,7 @@ steps:
     image: golang:latest
     commands:
       - make test
-      - make
+      - make install
 
   - name: coverage
     image: plugins/codecov
