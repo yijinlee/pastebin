@@ -1,1 +1,5 @@
-pastebin
+*~
+*.bak
+
+/pb
+/pastebin

@@ -7,9 +7,11 @@ dev: build
 
 build: clean
 	go get ./...
+	go build ./cmd/pb/...
 	go build .
 
 install:
+	go install ./cmd/pb/...
 	go install .
 
 test:
