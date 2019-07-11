@@ -186,11 +186,14 @@ func (s *Server) ViewHandler() httprouter.Handle {
 			return
 		}
 
-		blob, ok := s.store.Get(uuid)
+		rawBlob, ok := s.store.Get(uuid)
 		if !ok {
 			http.Error(w, "Not Found", http.StatusNotFound)
 			return
 		}
+
+		blob := rawBlob.(string)
+		blob = strings.ReplaceAll(blob, "\t", "    ")
 
 		switch accepts {
 		case "text/html":
@@ -200,14 +203,14 @@ func (s *Server) ViewHandler() httprouter.Handle {
 					Blob string
 					UUID string
 				}{
-					Blob: blob.(string),
+					Blob: blob,
 					UUID: uuid,
 				},
 			)
 		case "text/plain":
-			w.Write([]byte(blob.(string)))
+			w.Write([]byte(blob))
 		default:
-			w.Write([]byte(blob.(string)))
+			w.Write([]byte(blob))
 		}
 	}
 }

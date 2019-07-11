@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"os"
 
 	"github.com/prologic/pastebin/client"
@@ -12,7 +13,7 @@ import (
 const (
 	defaultConfig     = "pastebin.conf"
 	defaultUserConfig = "~/.pastebin.conf"
-	defaultURL        = "https://localhost:8000"
+	defaultURL        = "http://localhost:8000"
 )
 
 func getDefaultConfig() string {
@@ -36,5 +37,11 @@ func main() {
 
 	flag.Parse()
 
-	client.NewClient(url, insecure).Paste(os.Stdin)
+	cli := client.NewClient(url, insecure)
+
+	err := cli.Paste(os.Stdin)
+	if err != nil {
+		log.Printf("error posting paste: %s", err)
+		os.Exit(1)
+	}
 }
