@@ -1,4 +1,4 @@
-.PHONY: dev build clean
+.PHONY: dev build install clean
 
 all: dev
 
@@ -8,6 +8,9 @@ dev: build
 build: clean
 	go get ./...
 	go build .
+
+install:
+	go install .
 
 test:
 	go test ./...
