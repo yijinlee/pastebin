@@ -15,7 +15,7 @@ install:
 	go install .
 
 test:
-	go test ./...
+	go test -v -cover -coverprofile=coverage.txt -covermode=atomic -coverpkg=./... -race ./...
 
 clean:
-	rm -rf pastebin
+	git clean -f -d -X
