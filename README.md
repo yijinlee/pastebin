@@ -1,4 +1,5 @@
 # pastebin
+
 [![GoDoc](https://godoc.org/github.com/prologic/pastebin?status.svg)](https://godoc.org/github.com/prologic/pastebin)
 [![Go Report Card](https://goreportcard.com/badge/github.com/prologic/pastebin)](https://goreportcard.com/report/github.com/prologic/pastebin)
 
@@ -10,7 +11,8 @@ CLI for interacting with the service in a easy way or you can also use curl!
 ### Source
 
 ```#!bash
-$ go install github.com/prologic/pastebin/...
+$ go install github.com/prologic/pastebin
+$ go install github.com/prologic/pastebin/cmd/pb/...
 ```
 
 ## Usage
@@ -70,7 +72,7 @@ configuration file with contents similar to:
 $ cat ~/.pastebin.conf
 url=https://paste.mydomain.com/
 ```
-## License
 
+## License
 
 MIT
