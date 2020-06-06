@@ -8,11 +8,8 @@ RUN \
     apk add --update git && \
     rm -rf /var/cache/apk/*
 
-RUN mkdir -p /go/src/pastebin
-WORKDIR /go/src/pastebin
-
-COPY . /go/src/pastebin
 COPY . /usr/local/go/src/pastebin
+WORKDIR /usr/local/go/src/pastebin
 
 RUN go get -v -d
 RUN go get github.com/GeertJohan/go.rice/rice

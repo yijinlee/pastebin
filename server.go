@@ -4,12 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
 	"strings"
 	"time"
+    "math/rand"
 
 	// Logging
 	"github.com/unrolled/logger"
@@ -22,9 +22,19 @@ import (
 	"github.com/GeertJohan/go.rice"
 	"github.com/julienschmidt/httprouter"
 	"github.com/patrickmn/go-cache"
-	"github.com/renstrom/shortuuid"
 	"github.com/timewasted/go-accept-headers"
 )
+
+// modified from: https://stackoverflow.com/questions/22892120/how-to-generate-a-random-string-of-a-fixed-length-in-go
+// exclude chars 01iIlLoO
+const letterBytes = "abcdefghjkmnpqrstuvwxyz23456789ABCDEFGHJKMNPQRSTUVWXYZ"
+func RandStringBytes(n int) string {
+    b := make([]byte, n)
+    for i := range b {
+        b[i] = letterBytes[rand.Intn(len(letterBytes))]
+    }
+    return string(b)
+}
 
 // AcceptedTypes ...
 var AcceptedTypes = []string{
@@ -116,19 +126,25 @@ func (s *Server) PasteHandler() httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, p httprouter.Params) {
 		s.counters.Inc("n_paste")
 
-		body, err := ioutil.ReadAll(r.Body)
-		log.Printf("body: %v", body)
+        // from: https://stackoverflow.com/a/23284299
+        //Call to ParseForm makes form fields available.
+        err := r.ParseForm()
 		if err != nil {
 			http.Error(w, "Internal Error", http.StatusInternalServerError)
 			return
 		}
+        body := r.PostFormValue("blob")
+		log.Printf("body string: %s", body)
 
 		if len(body) == 0 {
 			http.Error(w, "Bad Request", http.StatusBadRequest)
 			return
 		}
 
-		uuid := shortuuid.NewWithNamespace(s.config.fqdn)
+		// generate 5-char random string (not true uuid..!)
+        rand.Seed(time.Now().UnixNano())
+		uuid := RandStringBytes(5)
+        
 		s.store.Set(uuid, string(body), cache.DefaultExpiration)
 
 		u, err := url.Parse(fmt.Sprintf("./p/%s", uuid))
@@ -158,7 +174,7 @@ func (s *Server) DownloadHandler() httprouter.Handle {
 
 		content := strings.NewReader(blob.(string))
 
-		w.Header().Set("Content-Disposition", "attachment; filename="+uuid)
+		w.Header().Set("Content-Disposition", "attachment; filename="+uuid+".txt")
 		w.Header().Set("Content-Type", "application/octet-stream")
 		w.Header().Set("Content-Length", string(content.Size()))
 
