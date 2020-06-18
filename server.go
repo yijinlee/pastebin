@@ -26,8 +26,8 @@ import (
 )
 
 // modified from: https://stackoverflow.com/questions/22892120/how-to-generate-a-random-string-of-a-fixed-length-in-go
-// exclude chars 01iIlLoO
-const letterBytes = "abcdefghjkmnpqrstuvwxyz23456789ABCDEFGHJKMNPQRSTUVWXYZ"
+// exclude chars 01iIlLoO; use just lowercase letters (won't need that many combinations..)
+const letterBytes = "abcdefghjkmnpqrstuvwxyz"
 func RandStringBytes(n int) string {
     b := make([]byte, n)
     for i := range b {
@@ -141,10 +141,10 @@ func (s *Server) PasteHandler() httprouter.Handle {
 			return
 		}
 
-		// generate 5-char random string (not true uuid..!)
+		// generate 4-char random string (not true uuid..!)
         rand.Seed(time.Now().UnixNano())
-		uuid := RandStringBytes(5)
-        
+		uuid := RandStringBytes(4)
+
 		s.store.Set(uuid, string(body), cache.DefaultExpiration)
 
 		u, err := url.Parse(fmt.Sprintf("./p/%s", uuid))
